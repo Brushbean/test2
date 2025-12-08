@@ -19,7 +19,6 @@ async function testConnection() {
     const res = await pool.query("SELECT NOW()");
     console.log("Connected to Render PostgreSQL successfully!");
     console.log("Server time:", res.rows[0]);
-    alert("CONECCION EXITOSA");
   } catch (err) {
     console.error("Connection failed:", err.message);
   }
@@ -28,3 +27,4 @@ async function testConnection() {
 testConnection();
 
 export default pool;
+
