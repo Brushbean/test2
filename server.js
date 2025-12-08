@@ -4,7 +4,7 @@ import pg from "pg";
 
 const { Pool } = pg;
 
-// ==== CONFIGURACIÓN DE BASE DE DATOS ====
+// ==== CONFIG PG ====
 const pool = new Pool({
   host: "dpg-d4pkjdadbo4c73bck9og-a.oregon-postgres.render.com",
   port: 5432,
@@ -14,43 +14,40 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false }
 });
 
-// ==== PROBAR CONEXIÓN ====
 async function testConnection() {
   try {
     console.log("Conectando a PostgreSQL…");
     const res = await pool.query("SELECT NOW()");
-    console.log("Conexión exitosa. Hora del servidor:", res.rows[0]);
+    console.log("DB OK:", res.rows[0]);
   } catch (err) {
-    console.error("Error al conectar:", err.message);
+    console.error("ERROR DB:", err.message);
   }
 }
 
-// ==== SERVIDOR EXPRESS ====
+// ==== EXPRESS ====
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Ruta simple
+// 👉 ESTA LÍNEA ES LA QUE SOLUCIONA TU PROBLEMA
+app.use(express.static("public"));
+
+// Ruta base
 app.get("/", (req, res) => {
-  res.send("Servidor funcionando correctamente 🚀");
+  res.sendFile("index.html", { root: "./public" });
 });
 
-// Ejemplo: obtener datos de una tabla
+// Test DB
 app.get("/test", async (req, res) => {
   try {
-    const result = await pool.query("SELECT NOW()");
-    res.json({ now: result.rows[0] });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    const r = await pool.query("SELECT NOW()");
+    res.json(r.rows[0]);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
   }
 });
 
-// Puerto asignado por Render
 const PORT = process.env.PORT || 3000;
 
-// Iniciar el servidor
 testConnection().then(() => {
-  app.listen(PORT, () =>
-    console.log(`Servidor iniciado en puerto ${PORT}`)
-  );
-});
+  app.listen(PORT, () => console.lo
