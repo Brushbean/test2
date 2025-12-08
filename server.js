@@ -29,12 +29,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 👉 ESTA LÍNEA ES LA QUE SOLUCIONA TU PROBLEMA
+// Servir frontend
 app.use(express.static("public"));
 
 // Ruta base
 app.get("/", (req, res) => {
-  res.sendFile("index.html", { root: "./public" });
+  res.sendFile("index.html", { root: "public" });
 });
 
 // Test DB
@@ -50,4 +50,7 @@ app.get("/test", async (req, res) => {
 const PORT = process.env.PORT || 3000;
 
 testConnection().then(() => {
-  app.listen(PORT, () => console.lo
+  app.listen(PORT, () =>
+    console.log(`Servidor iniciado en el puerto ${PORT}`)
+  );
+});
